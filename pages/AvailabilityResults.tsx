@@ -1,0 +1,186 @@
+
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { RoutePath, AppointmentData } from '../types';
+import { SectionTitle, PrimaryButton, Header } from '../components/Shared';
+import { ChevronDown, MapPin, User, Clock, Check } from 'lucide-react';
+
+interface Props {
+  appointment: AppointmentData;
+  onUpdate: (data: Partial<AppointmentData>) => void;
+}
+
+const STATIC_CENTERS = ["Hospital Nacional Edgardo Rebagliati Martins", "Clínica Milagros", "Policlínico Pablo Bermúdez", "Hospital Nacional Alberto Sabogal Sologuren"];
+
+const DOCTORS_POOL = [
+  "Garay, P.", "Mendoza, L.", "Rojas, J.", "Sánchez, M.", 
+  "Vargas, R.", "Castillo, K.", "Torres, F.", "Quispe, G.",
+  "López, D.", "Huamán, A.", "Zegarra, B."
+];
+
+const AvailabilityResults: React.FC<Props> = ({ appointment, onUpdate }) => {
+  const navigate = useNavigate();
+  
+  const [showTimes, setShowTimes] = useState(false);
+  const [showDoctors, setShowDoctors] = useState(false);
+  const [showCenters, setShowCenters] = useState(false);
+
+  const centers = Array.from(new Set([...STATIC_CENTERS, appointment.healthCenter].filter(Boolean) as string[]));
+  
+  const getDoctorsForCenter = (center: string) => {
+    if (center.includes("Rebagliati")) return ["Garay, P.", "Mendoza, L.", "Rojas, J."];
+    if (center.includes("Milagros")) return ["Sánchez, M.", "Vargas, R.", "Castillo, K."];
+    if (center.includes("Bermúdez")) return ["Torres, F.", "Quispe, G."];
+    return [DOCTORS_POOL[0], DOCTORS_POOL[1], DOCTORS_POOL[2]];
+  };
+
+  const times = ["08:00 AM", "10:30 AM", "14:00 PM", "16:00 PM", "18:30 PM"];
+
+  const formatDate = (dateStr?: string) => {
+    if (!dateStr) return "Seleccionar Fecha";
+    const date = new Date(dateStr + "T00:00:00");
+    const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+    return date.toLocaleDateString('es-ES', options);
+  };
+
+  const handleSelectTime = (time: string) => {
+    const displayDate = formatDate(appointment.tentativeDate);
+    onUpdate({ selectedDateTime: `${displayDate} - ${time}` });
+    setShowTimes(false);
+  };
+
+  const handleSelectDoctor = (doctor: string) => {
+    onUpdate({ selectedDoctor: doctor, selectedDateTime: undefined });
+    setShowDoctors(false);
+  };
+
+  const handleSelectCenter = (center: string) => {
+    onUpdate({ healthCenter: center, selectedDoctor: undefined, selectedDateTime: undefined });
+    setShowCenters(false);
+  };
+
+  const currentDoctors = appointment.healthCenter ? getDoctorsForCenter(appointment.healthCenter) : [];
+
+  return (
+    <div className="flex flex-col h-full animate-fadeIn bg-white overflow-hidden">
+      <Header title="Disponibilidad" showBack />
+      <SectionTitle>ELIJA SU PREFERENCIA</SectionTitle>
+      
+      <div className="px-6 space-y-5 flex-1 pt-2 overflow-y-auto pb-6">
+        <p className="text-slate-400 text-[10px] font-extrabold uppercase tracking-widest mb-2 ml-1">Personaliza tu cita médica:</p>
+
+        {/* 1. Centro de Salud */}
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2 mb-1">
+             <MapPin className="w-3.5 h-3.5 text-[#F9B2C1]" />
+             <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Establecimiento</span>
+          </div>
+          <div className="relative">
+             <div 
+                className={`bg-slate-50 border border-slate-100 rounded-2xl p-4 flex justify-between items-center cursor-pointer transition-all ${showCenters ? 'ring-2 ring-[#F9B2C1] shadow-md border-transparent' : ''}`}
+                onClick={() => { setShowCenters(!showCenters); setShowTimes(false); setShowDoctors(false); }}>
+                <span className="text-slate-800 font-bold text-sm truncate pr-4">
+                  {appointment.healthCenter || "Elegir centro"}
+                </span>
+                <ChevronDown className={`w-5 h-5 text-slate-300 transition-transform ${showCenters ? 'rotate-180' : ''}`} />
+             </div>
+             {showCenters && (
+               <div className="absolute top-full left-0 right-0 z-30 bg-white shadow-2xl border border-pink-100 rounded-2xl mt-2 max-h-48 overflow-y-auto py-2">
+                 {centers.map((c) => (
+                   <button key={c} onClick={() => handleSelectCenter(c)} className="w-full text-left px-5 py-4 text-xs font-bold text-slate-700 hover:bg-pink-50 flex items-center justify-between border-b last:border-0 border-pink-50">
+                     <span className="truncate">{c}</span>
+                     {appointment.healthCenter === c && <Check className="w-4 h-4 text-[#F9B2C1]" />}
+                   </button>
+                 ))}
+               </div>
+             )}
+          </div>
+        </div>
+
+        {/* 2. Doctor */}
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2 mb-1">
+             <User className="w-3.5 h-3.5 text-[#F9B2C1]" />
+             <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Obstetra / Especialista</span>
+          </div>
+          <div className="relative">
+            <div 
+              className={`bg-slate-50 border border-slate-100 rounded-2xl p-4 flex justify-between items-center cursor-pointer transition-all ${!appointment.healthCenter ? 'opacity-40 grayscale cursor-not-allowed' : ''} ${showDoctors ? 'ring-2 ring-[#F9B2C1] shadow-md border-transparent' : ''}`}
+              onClick={() => { if(appointment.healthCenter) { setShowDoctors(!showDoctors); setShowTimes(false); setShowCenters(false); } }}>
+              <span className={`font-bold text-sm ${appointment.selectedDoctor ? 'text-slate-800' : 'text-slate-400'}`}>
+                {appointment.selectedDoctor || "Elegir especialista"}
+              </span>
+              <ChevronDown className={`w-5 h-5 text-slate-300 transition-transform ${showDoctors ? 'rotate-180' : ''}`} />
+            </div>
+            {showDoctors && (
+              <div className="absolute top-full left-0 right-0 z-20 bg-white shadow-2xl border border-pink-100 rounded-2xl mt-2 max-h-48 overflow-y-auto py-2">
+                {currentDoctors.map((d) => (
+                  <button key={d} onClick={() => handleSelectDoctor(d)} className="w-full text-left px-5 py-4 text-xs font-bold text-slate-700 hover:bg-pink-50 flex items-center justify-between border-b last:border-0 border-pink-50">
+                    <span>Dr. {d}</span>
+                    {appointment.selectedDoctor === d && <Check className="w-4 h-4 text-[#F9B2C1]" />}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 3. Horario */}
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2 mb-1">
+             <Clock className="w-3.5 h-3.5 text-[#F9B2C1]" />
+             <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Horario disponible</span>
+          </div>
+          <div className="relative">
+            <div 
+              className={`bg-slate-50 border border-slate-100 rounded-2xl p-4 flex justify-between items-center cursor-pointer transition-all ${!appointment.selectedDoctor ? 'opacity-40 grayscale cursor-not-allowed' : ''} ${showTimes ? 'ring-2 ring-[#F9B2C1] shadow-md border-transparent' : ''}`}
+              onClick={() => { if(appointment.selectedDoctor) { setShowTimes(!showTimes); setShowDoctors(false); setShowCenters(false); } }}>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-extrabold text-[#F9B2C1] uppercase">{formatDate(appointment.tentativeDate)}</span>
+                <span className={`font-bold text-sm ${appointment.selectedDateTime ? 'text-slate-800' : 'text-slate-400'}`}>
+                  {appointment.selectedDateTime?.split(' - ')[1] || "Elegir hora"}
+                </span>
+              </div>
+              <ChevronDown className={`w-5 h-5 text-slate-300 transition-transform ${showTimes ? 'rotate-180' : ''}`} />
+            </div>
+            {showTimes && (
+              <div className="absolute top-full left-0 right-0 z-10 bg-white shadow-2xl border border-pink-100 rounded-2xl mt-2 max-h-48 overflow-y-auto py-2">
+                {times.map((t) => (
+                  <button key={t} onClick={() => handleSelectTime(t)} className="w-full text-left px-5 py-4 text-xs font-bold text-slate-700 hover:bg-pink-50 flex items-center justify-between border-b last:border-0 border-pink-50">
+                    <span>{t}</span>
+                    {appointment.selectedDateTime?.includes(t) && <Check className="w-4 h-4 text-[#F9B2C1]" />}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="bg-pink-50/50 p-5 rounded-2xl border border-pink-100 mt-4">
+          <h4 className="text-[10px] text-[#F9B2C1] font-extrabold uppercase tracking-widest mb-3">Resumen de búsqueda:</h4>
+          <div className="flex flex-wrap gap-4">
+            <div className="flex flex-col">
+              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Tipo</span>
+              <span className="text-xs font-bold text-slate-700">{appointment.type}</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Periodo</span>
+              <span className="text-xs font-bold text-slate-700">{appointment.week}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="p-6 bg-white border-t border-slate-100 shrink-0">
+        <PrimaryButton 
+          onClick={() => navigate(RoutePath.CONFIRMATION)}
+          disabled={!appointment.selectedDateTime || !appointment.selectedDoctor || !appointment.healthCenter}
+        >
+          VERIFICAR Y CONFIRMAR
+        </PrimaryButton>
+      </div>
+    </div>
+  );
+};
+
+export default AvailabilityResults;
