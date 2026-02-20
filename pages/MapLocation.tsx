@@ -13,7 +13,7 @@ const MapLocation: React.FC<Props> = ({ appointment }) => {
   const navigate = useNavigate();
   const mapCenter = appointment.healthCenter || "Establecimiento de Salud";
   
-  // Una nueva imagen de mapa referencial con un estilo de ciudad detallada
+  // Una imagen de mapa referencial con un estilo de ciudad detallada
   const NEW_MAP_URL = "https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=1000&auto=format&fit=crop";
 
   return (
@@ -45,8 +45,8 @@ const MapLocation: React.FC<Props> = ({ appointment }) => {
               <Globe className="w-4 h-4 text-white" />
            </div>
            <div className="flex flex-col">
-              <span className="text-[10px] font-black text-white uppercase tracking-tighter">Acceso Directo</span>
-              <span className="text-[8px] text-pink-100/80 font-bold uppercase">Red de Salud VidaMaterna</span>
+              {/* Se eliminó el texto "ACCESO DIRECTO" por solicitud del usuario */}
+              <span className="text-[8px] text-pink-100/80 font-bold uppercase tracking-widest">Red de Salud VidaMaterna</span>
            </div>
         </div>
       </div>

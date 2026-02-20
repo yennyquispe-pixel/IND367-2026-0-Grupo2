@@ -4,12 +4,21 @@ import { useNavigate } from 'react-router-dom';
 import { RoutePath } from '../types';
 import { PrimaryButton, SecondaryButton, Logo } from '../components/Shared';
 
-const Home: React.FC = () => {
+interface Props {
+  onNewAppointment?: () => void;
+}
+
+const Home: React.FC<Props> = ({ onNewAppointment }) => {
   const navigate = useNavigate();
+
+  const handleNewAppointment = () => {
+    if (onNewAppointment) onNewAppointment();
+    navigate(RoutePath.SCHEDULE_FORM);
+  };
 
   return (
     <div className="flex flex-col items-center justify-center p-8 h-full animate-fadeIn overflow-hidden">
-      {/* Header con Logo SVG - Se aumentó el tamaño del logo */}
+      {/* Header con Logo SVG y nombre debajo */}
       <div className="flex flex-col items-center gap-1 mb-8">
         <Logo className="w-28 h-28" showText />
       </div>
@@ -35,7 +44,7 @@ const Home: React.FC = () => {
       </p>
 
       <div className="w-full space-y-4 max-w-sm">
-        <PrimaryButton onClick={() => navigate(RoutePath.SCHEDULE_FORM)}>
+        <PrimaryButton onClick={handleNewAppointment}>
           AGENDAR NUEVA CITA
         </PrimaryButton>
         <SecondaryButton onClick={() => navigate(RoutePath.CALENDAR)}>

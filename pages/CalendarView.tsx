@@ -141,7 +141,7 @@ const CalendarView: React.FC<Props> = ({ history, onViewDetails }) => {
                    }`}
                  >
                    {day}
-                   {/* Señalización de citas (anteriores y futuras) */}
+                   {/* Marcador de punto debajo del número */}
                    {hasApt && (
                      <div className="absolute -bottom-0.5 flex gap-0.5">
                        {dayAppointments.slice(0, 3).map((apt, i) => (

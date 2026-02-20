@@ -20,8 +20,8 @@ const Success: React.FC<Props> = ({ appointment, onAddToCalendar }) => {
 
   return (
     <div className="flex flex-col h-full animate-fadeIn bg-white overflow-hidden">
-      <Header title="VidaMaterna" />
-      <SectionTitle>CITA CONFIRMADA</SectionTitle>
+      <Header title="Cita Confirmada" />
+      <SectionTitle>FINALIZADO</SectionTitle>
 
       <div className="flex-1 flex flex-col items-center p-6 py-1 overflow-hidden">
         <div className="bg-[#F9B2C1] p-2 rounded-full mb-2 mt-1 shadow-md shadow-pink-100 shrink-0">

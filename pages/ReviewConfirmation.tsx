@@ -23,8 +23,8 @@ const ReviewConfirmation: React.FC<Props> = ({ appointment, history }) => {
 
   return (
     <div className="flex flex-col h-full animate-fadeIn bg-white overflow-hidden">
-      <Header title="VidaMaterna" showBack />
-      <SectionTitle>CONFIRMACIÓN DE CITA</SectionTitle>
+      <Header title="Confirmación de cita" showBack />
+      <SectionTitle>AGENDANDO</SectionTitle>
 
       <div className="flex-1 flex flex-col px-6 py-1">
         <div className="mb-3 rounded-2xl overflow-hidden shadow-sm shrink-0">

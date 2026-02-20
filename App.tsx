@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppointmentData, RoutePath, PUBLIC_HEALTH_CENTERS } from './types';
 import Login from './pages/Login';
@@ -12,18 +12,28 @@ import MapLocation from './pages/MapLocation';
 import CalendarView from './pages/CalendarView';
 import ConflictError from './pages/ConflictError';
 import AppointmentDetails from './pages/AppointmentDetails';
+import { SplashScreen } from './components/Shared';
 
 const App: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [appointment, setAppointment] = useState<AppointmentData>({});
   const [viewingAppointment, setViewingAppointment] = useState<AppointmentData | null>(null);
   
+  useEffect(() => {
+    // Simular carga inicial de la aplicación
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, []);
+
   const [history, setHistory] = useState<AppointmentData[]>([
     {
       id: 'pre-1',
       week: '5 semanas',
       type: 'REGULAR',
-      healthCenter: PUBLIC_HEALTH_CENTERS[2], // Rebagliati
+      healthCenter: PUBLIC_HEALTH_CENTERS[2],
       selectedDateTime: '10 de Diciembre - 09:00 AM',
       selectedDoctor: 'Mendoza, L.',
       tentativeDate: '2024-12-10',
@@ -36,7 +46,7 @@ const App: React.FC = () => {
       id: 'pre-2',
       week: '8 semanas',
       type: 'ULTRASOUND',
-      healthCenter: PUBLIC_HEALTH_CENTERS[1], // Maternidad de Lima
+      healthCenter: PUBLIC_HEALTH_CENTERS[1],
       selectedDateTime: '25 de Enero - 16:00 PM',
       selectedDoctor: 'Sánchez, M.',
       tentativeDate: '2025-01-25',
@@ -49,6 +59,10 @@ const App: React.FC = () => {
 
   const updateAppointment = (data: Partial<AppointmentData>) => {
     setAppointment(prev => ({ ...prev, ...data }));
+  };
+
+  const resetAppointment = () => {
+    setAppointment({});
   };
 
   const addToHistory = () => {
@@ -66,6 +80,10 @@ const App: React.FC = () => {
     setIsLoggedIn(true);
   };
 
+  if (isLoading) {
+    return <SplashScreen />;
+  }
+
   return (
     <HashRouter>
       <div className="h-screen w-full max-w-md mx-auto bg-white shadow-xl flex flex-col overflow-hidden relative border-x border-gray-100">
@@ -75,7 +93,7 @@ const App: React.FC = () => {
           ) : (
             <>
               <Route path={RoutePath.LOGIN} element={<Navigate to={RoutePath.HOME} replace />} />
-              <Route path={RoutePath.HOME} element={<Home />} />
+              <Route path={RoutePath.HOME} element={<Home onNewAppointment={resetAppointment} />} />
               <Route 
                 path={RoutePath.SCHEDULE_FORM} 
                 element={<ScheduleForm appointment={appointment} onUpdate={updateAppointment} />} 

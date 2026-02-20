@@ -58,7 +58,7 @@ const ScheduleForm: React.FC<Props> = ({ appointment, onUpdate }) => {
     <div className="flex flex-col h-full animate-fadeIn bg-white overflow-hidden">
       <Header title="Registro de Cita" showBack />
       
-      <div className="p-6 space-y-3.5 flex-1 overflow-y-auto pb-4">
+      <div className="p-6 space-y-3.5 flex-1 overflow-y-auto">
         <div className="space-y-1">
           <label className="block text-slate-400 font-extrabold text-[10px] uppercase tracking-widest ml-1">Semana de embarazo</label>
           <div className="relative">
@@ -154,15 +154,15 @@ const ScheduleForm: React.FC<Props> = ({ appointment, onUpdate }) => {
             />
           </div>
         </div>
+      </div>
 
-        <div className="pt-2">
-          <PrimaryButton 
-            onClick={() => navigate(RoutePath.AVAILABILITY)}
-            disabled={!appointment.type || !appointment.tentativeDate || !appointment.healthCenter}
-          >
-            BUSCAR HORARIOS DISPONIBLES
-          </PrimaryButton>
-        </div>
+      <div className="p-6 bg-white border-t border-slate-100 shrink-0">
+        <PrimaryButton 
+          onClick={() => navigate(RoutePath.AVAILABILITY)}
+          disabled={!appointment.type || !appointment.tentativeDate || !appointment.healthCenter}
+        >
+          BUSCAR HORARIOS DISPONIBLES
+        </PrimaryButton>
       </div>
     </div>
   );
