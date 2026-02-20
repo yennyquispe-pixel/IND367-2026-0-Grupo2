@@ -87,6 +87,6 @@ export const SecondaryButton: React.FC<{
 export const InfoCard: React.FC<{ label: string; value: string }> = ({ label, value }) => (
   <div className="bg-slate-50 px-4 py-3 rounded-2xl mb-3 flex flex-col shadow-sm border border-slate-100">
     <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">{label}</span>
-    <span className="text-slate-800 font-semibold text-sm">{value}</span>
+    <span className="text-slate-800 font-normal text-sm">{value}</span>
   </div>
 );

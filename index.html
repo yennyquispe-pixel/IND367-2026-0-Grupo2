@@ -40,6 +40,20 @@
             scrollbar-width: thin;
             scrollbar-color: #F9B2C1 #fef1f2;
         }
+
+        /* Estilo para el icono del selector de fechas nativo (lado derecho de dd/mm/aaaa) */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            /* Filtro para aproximar el color #F9B2C1 */
+            filter: invert(84%) sepia(23%) saturate(735%) hue-rotate(303deg) brightness(103%) contrast(96%);
+            padding: 2px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        input[type="date"]::-webkit-calendar-picker-indicator:hover {
+            transform: scale(1.1);
+        }
     </style>
 <script type="importmap">
 {

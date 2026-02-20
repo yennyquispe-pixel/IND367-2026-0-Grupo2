@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Calendar, MapPin, X, ChevronRight } from 'lucide-react';
 import { AppointmentData, RoutePath, AppointmentType, PUBLIC_HEALTH_CENTERS } from '../types';
-// Fixed missing import: Added PrimaryButton to imports from Shared components
 import { Header, PrimaryButton } from '../components/Shared';
 
 interface Props {
@@ -59,12 +58,12 @@ const ScheduleForm: React.FC<Props> = ({ appointment, onUpdate }) => {
     <div className="flex flex-col h-full animate-fadeIn bg-white overflow-hidden">
       <Header title="Registro de Cita" showBack />
       
-      <div className="p-6 space-y-6 flex-1 overflow-y-auto pb-10">
-        <div className="space-y-2">
+      <div className="p-6 space-y-3.5 flex-1 overflow-y-auto pb-4">
+        <div className="space-y-1">
           <label className="block text-slate-400 font-extrabold text-[10px] uppercase tracking-widest ml-1">Semana de embarazo</label>
           <div className="relative">
             <select 
-              className="w-full bg-slate-50 border border-slate-100 text-slate-800 py-4 px-5 rounded-2xl outline-none appearance-none font-bold shadow-sm text-sm focus:ring-2 focus:ring-[#F9B2C1]/30 transition-all"
+              className="w-full bg-slate-50 border border-slate-100 text-slate-800 py-3 px-5 rounded-2xl outline-none appearance-none font-medium shadow-sm text-sm focus:ring-2 focus:ring-[#F9B2C1]/30 transition-all"
               value={appointment.week || ""}
               onChange={(e) => onUpdate({ week: e.target.value })}
             >
@@ -79,9 +78,9 @@ const ScheduleForm: React.FC<Props> = ({ appointment, onUpdate }) => {
           </div>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-1.5">
           <label className="block text-slate-400 font-extrabold text-[10px] uppercase tracking-widest ml-1">Tipo de cita médica</label>
-          <div className="grid grid-cols-1 gap-3">
+          <div className="grid grid-cols-1 gap-2">
             {[
               { id: 'REGULAR', title: 'Control Regular', desc: 'Seguimiento prenatal estándar' },
               { id: 'HIGH_RISK', title: 'Alto Riesgo', desc: 'Atención especializada' },
@@ -90,8 +89,8 @@ const ScheduleForm: React.FC<Props> = ({ appointment, onUpdate }) => {
               <div 
                 key={type.id}
                 onClick={() => handleTypeSelect(type.id as AppointmentType)}
-                className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between group ${
-                  appointment.type === type.id ? 'border-[#F9B2C1] bg-pink-50 shadow-md' : 'border-slate-50 bg-slate-50 hover:border-pink-100'
+                className={`p-3 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between group ${
+                  appointment.type === type.id ? 'border-[#F9B2C1] bg-pink-50 shadow-sm' : 'border-slate-50 bg-slate-50 hover:border-pink-100'
                 }`}
               >
                 <div className="flex items-center gap-4">
@@ -99,8 +98,8 @@ const ScheduleForm: React.FC<Props> = ({ appointment, onUpdate }) => {
                      {appointment.type === type.id && <div className="w-2.5 h-2.5 bg-[#F9B2C1] rounded-full"></div>}
                   </div>
                   <div>
-                    <h4 className="text-slate-800 font-bold text-sm">{type.title}</h4>
-                    <p className="text-slate-400 text-[10px] font-medium">{type.desc}</p>
+                    <h4 className={`text-slate-800 text-xs ${appointment.type === type.id ? 'font-bold' : 'font-medium'}`}>{type.title}</h4>
+                    <p className="text-slate-400 text-[9px] font-medium">{type.desc}</p>
                   </div>
                 </div>
                 <ChevronRight className={`w-4 h-4 transition-colors ${appointment.type === type.id ? 'text-[#F9B2C1]' : 'text-slate-200'}`} />
@@ -109,14 +108,14 @@ const ScheduleForm: React.FC<Props> = ({ appointment, onUpdate }) => {
           </div>
         </div>
 
-        <div className="space-y-2 relative" ref={suggestionRef}>
+        <div className="space-y-1 relative" ref={suggestionRef}>
           <label className="block text-slate-400 font-extrabold text-[10px] uppercase tracking-widest ml-1">Centro de Salud / Hospital</label>
           <div className="relative">
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#F9B2C1]" />
             <input 
               type="text"
               placeholder="Buscar hospital..."
-              className="w-full bg-slate-50 border border-slate-100 py-4 pl-12 pr-12 rounded-2xl text-slate-800 placeholder-slate-300 outline-none focus:ring-2 focus:ring-[#F9B2C1]/30 transition-all text-sm font-bold"
+              className="w-full bg-slate-50 border border-slate-100 py-3 pl-12 pr-12 rounded-2xl text-slate-800 placeholder-slate-300 outline-none focus:ring-2 focus:ring-[#F9B2C1]/30 transition-all text-sm font-medium"
               value={searchTerm}
               onChange={handleSearchChange}
               onFocus={() => searchTerm.length > 1 && setShowSuggestions(true)}
@@ -128,35 +127,35 @@ const ScheduleForm: React.FC<Props> = ({ appointment, onUpdate }) => {
             )}
           </div>
           {showSuggestions && suggestions.length > 0 && (
-            <div className="absolute z-50 w-full mt-2 bg-white border border-pink-100 rounded-2xl shadow-2xl max-h-52 overflow-y-auto py-2">
+            <div className="absolute z-50 w-full mt-1 bg-white border border-pink-100 rounded-2xl shadow-2xl max-h-40 overflow-y-auto py-1">
               {suggestions.map((center, index) => (
                 <button
                   key={index}
                   onClick={() => selectSuggestion(center)}
-                  className="w-full text-left px-5 py-3.5 text-xs text-slate-700 hover:bg-pink-50 border-b last:border-0 border-pink-50 flex items-center gap-3 transition-colors"
+                  className="w-full text-left px-5 py-3 text-[11px] text-slate-700 hover:bg-pink-50 border-b last:border-0 border-pink-50 flex items-center gap-3 transition-colors"
                 >
-                  <MapPin className="w-4 h-4 text-[#F9B2C1] opacity-50" />
-                  <span className="font-bold">{center}</span>
+                  <MapPin className="w-3.5 h-3.5 text-[#F9B2C1] opacity-50" />
+                  <span className="font-medium">{center}</span>
                 </button>
               ))}
             </div>
           )}
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           <label className="block text-slate-400 font-extrabold text-[10px] uppercase tracking-widest ml-1">Fecha de preferencia</label>
           <div className="relative">
-            <Calendar className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+            <Calendar className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#F9B2C1]" />
             <input 
               type="date"
-              className="w-full bg-slate-50 border border-slate-100 py-4 pl-12 pr-5 rounded-2xl text-slate-800 outline-none focus:ring-2 focus:ring-[#F9B2C1]/30 transition-all font-bold text-sm"
+              className={`w-full bg-slate-50 border border-slate-100 py-3 pl-12 pr-5 rounded-2xl outline-none focus:ring-2 focus:ring-[#F9B2C1]/30 transition-all text-sm font-medium ${appointment.tentativeDate ? 'text-slate-800' : 'text-slate-300'}`}
               value={appointment.tentativeDate || ""}
               onChange={(e) => onUpdate({ tentativeDate: e.target.value })}
             />
           </div>
         </div>
 
-        <div className="pt-6">
+        <div className="pt-2">
           <PrimaryButton 
             onClick={() => navigate(RoutePath.AVAILABILITY)}
             disabled={!appointment.type || !appointment.tentativeDate || !appointment.healthCenter}

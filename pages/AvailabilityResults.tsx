@@ -66,28 +66,28 @@ const AvailabilityResults: React.FC<Props> = ({ appointment, onUpdate }) => {
       <Header title="Disponibilidad" showBack />
       <SectionTitle>ELIJA SU PREFERENCIA</SectionTitle>
       
-      <div className="px-6 space-y-5 flex-1 pt-2 overflow-y-auto pb-6">
-        <p className="text-slate-400 text-[10px] font-extrabold uppercase tracking-widest mb-2 ml-1">Personaliza tu cita médica:</p>
+      <div className="px-6 space-y-4 flex-1 pt-1 overflow-y-auto pb-4">
+        <p className="text-slate-400 text-[10px] font-extrabold uppercase tracking-widest mb-1 ml-1">Personaliza tu cita médica:</p>
 
         {/* 1. Centro de Salud */}
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2 mb-1">
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center gap-2">
              <MapPin className="w-3.5 h-3.5 text-[#F9B2C1]" />
              <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Establecimiento</span>
           </div>
           <div className="relative">
              <div 
-                className={`bg-slate-50 border border-slate-100 rounded-2xl p-4 flex justify-between items-center cursor-pointer transition-all ${showCenters ? 'ring-2 ring-[#F9B2C1] shadow-md border-transparent' : ''}`}
+                className={`bg-slate-50 border border-slate-100 rounded-2xl p-3.5 flex justify-between items-center cursor-pointer transition-all ${showCenters ? 'ring-2 ring-[#F9B2C1] shadow-md border-transparent' : ''}`}
                 onClick={() => { setShowCenters(!showCenters); setShowTimes(false); setShowDoctors(false); }}>
-                <span className="text-slate-800 font-bold text-sm truncate pr-4">
+                <span className={`font-medium text-sm truncate pr-4 ${appointment.healthCenter ? 'text-slate-800' : 'text-slate-400'}`}>
                   {appointment.healthCenter || "Elegir centro"}
                 </span>
                 <ChevronDown className={`w-5 h-5 text-slate-300 transition-transform ${showCenters ? 'rotate-180' : ''}`} />
              </div>
              {showCenters && (
-               <div className="absolute top-full left-0 right-0 z-30 bg-white shadow-2xl border border-pink-100 rounded-2xl mt-2 max-h-48 overflow-y-auto py-2">
+               <div className="absolute top-full left-0 right-0 z-30 bg-white shadow-2xl border border-pink-100 rounded-2xl mt-1 max-h-40 overflow-y-auto py-1">
                  {centers.map((c) => (
-                   <button key={c} onClick={() => handleSelectCenter(c)} className="w-full text-left px-5 py-4 text-xs font-bold text-slate-700 hover:bg-pink-50 flex items-center justify-between border-b last:border-0 border-pink-50">
+                   <button key={c} onClick={() => handleSelectCenter(c)} className="w-full text-left px-5 py-3 text-[11px] font-medium text-slate-700 hover:bg-pink-50 flex items-center justify-between border-b last:border-0 border-pink-50">
                      <span className="truncate">{c}</span>
                      {appointment.healthCenter === c && <Check className="w-4 h-4 text-[#F9B2C1]" />}
                    </button>
@@ -98,24 +98,24 @@ const AvailabilityResults: React.FC<Props> = ({ appointment, onUpdate }) => {
         </div>
 
         {/* 2. Doctor */}
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2 mb-1">
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center gap-2">
              <User className="w-3.5 h-3.5 text-[#F9B2C1]" />
              <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Obstetra / Especialista</span>
           </div>
           <div className="relative">
             <div 
-              className={`bg-slate-50 border border-slate-100 rounded-2xl p-4 flex justify-between items-center cursor-pointer transition-all ${!appointment.healthCenter ? 'opacity-40 grayscale cursor-not-allowed' : ''} ${showDoctors ? 'ring-2 ring-[#F9B2C1] shadow-md border-transparent' : ''}`}
+              className={`bg-slate-50 border border-slate-100 rounded-2xl p-3.5 flex justify-between items-center cursor-pointer transition-all ${!appointment.healthCenter ? 'opacity-40 grayscale cursor-not-allowed' : ''} ${showDoctors ? 'ring-2 ring-[#F9B2C1] shadow-md border-transparent' : ''}`}
               onClick={() => { if(appointment.healthCenter) { setShowDoctors(!showDoctors); setShowTimes(false); setShowCenters(false); } }}>
-              <span className={`font-bold text-sm ${appointment.selectedDoctor ? 'text-slate-800' : 'text-slate-400'}`}>
+              <span className={`font-medium text-sm ${appointment.selectedDoctor ? 'text-slate-800' : 'text-slate-400'}`}>
                 {appointment.selectedDoctor || "Elegir especialista"}
               </span>
               <ChevronDown className={`w-5 h-5 text-slate-300 transition-transform ${showDoctors ? 'rotate-180' : ''}`} />
             </div>
             {showDoctors && (
-              <div className="absolute top-full left-0 right-0 z-20 bg-white shadow-2xl border border-pink-100 rounded-2xl mt-2 max-h-48 overflow-y-auto py-2">
+              <div className="absolute top-full left-0 right-0 z-20 bg-white shadow-2xl border border-pink-100 rounded-2xl mt-1 max-h-40 overflow-y-auto py-1">
                 {currentDoctors.map((d) => (
-                  <button key={d} onClick={() => handleSelectDoctor(d)} className="w-full text-left px-5 py-4 text-xs font-bold text-slate-700 hover:bg-pink-50 flex items-center justify-between border-b last:border-0 border-pink-50">
+                  <button key={d} onClick={() => handleSelectDoctor(d)} className="w-full text-left px-5 py-3 text-[11px] font-medium text-slate-700 hover:bg-pink-50 flex items-center justify-between border-b last:border-0 border-pink-50">
                     <span>Dr. {d}</span>
                     {appointment.selectedDoctor === d && <Check className="w-4 h-4 text-[#F9B2C1]" />}
                   </button>
@@ -126,27 +126,27 @@ const AvailabilityResults: React.FC<Props> = ({ appointment, onUpdate }) => {
         </div>
 
         {/* 3. Horario */}
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2 mb-1">
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center gap-2">
              <Clock className="w-3.5 h-3.5 text-[#F9B2C1]" />
              <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Horario disponible</span>
           </div>
           <div className="relative">
             <div 
-              className={`bg-slate-50 border border-slate-100 rounded-2xl p-4 flex justify-between items-center cursor-pointer transition-all ${!appointment.selectedDoctor ? 'opacity-40 grayscale cursor-not-allowed' : ''} ${showTimes ? 'ring-2 ring-[#F9B2C1] shadow-md border-transparent' : ''}`}
+              className={`bg-slate-50 border border-slate-100 rounded-2xl p-3.5 flex justify-between items-center cursor-pointer transition-all ${!appointment.selectedDoctor ? 'opacity-40 grayscale cursor-not-allowed' : ''} ${showTimes ? 'ring-2 ring-[#F9B2C1] shadow-md border-transparent' : ''}`}
               onClick={() => { if(appointment.selectedDoctor) { setShowTimes(!showTimes); setShowDoctors(false); setShowCenters(false); } }}>
               <div className="flex flex-col">
-                <span className="text-[10px] font-extrabold text-[#F9B2C1] uppercase">{formatDate(appointment.tentativeDate)}</span>
-                <span className={`font-bold text-sm ${appointment.selectedDateTime ? 'text-slate-800' : 'text-slate-400'}`}>
+                <span className="text-[9px] font-extrabold text-[#F9B2C1] uppercase tracking-tighter">{formatDate(appointment.tentativeDate)}</span>
+                <span className={`font-medium text-sm ${appointment.selectedDateTime ? 'text-slate-800' : 'text-slate-400'}`}>
                   {appointment.selectedDateTime?.split(' - ')[1] || "Elegir hora"}
                 </span>
               </div>
               <ChevronDown className={`w-5 h-5 text-slate-300 transition-transform ${showTimes ? 'rotate-180' : ''}`} />
             </div>
             {showTimes && (
-              <div className="absolute top-full left-0 right-0 z-10 bg-white shadow-2xl border border-pink-100 rounded-2xl mt-2 max-h-48 overflow-y-auto py-2">
+              <div className="absolute top-full left-0 right-0 z-10 bg-white shadow-2xl border border-pink-100 rounded-2xl mt-1 max-h-40 overflow-y-auto py-1">
                 {times.map((t) => (
-                  <button key={t} onClick={() => handleSelectTime(t)} className="w-full text-left px-5 py-4 text-xs font-bold text-slate-700 hover:bg-pink-50 flex items-center justify-between border-b last:border-0 border-pink-50">
+                  <button key={t} onClick={() => handleSelectTime(t)} className="w-full text-left px-5 py-3 text-[11px] font-medium text-slate-700 hover:bg-pink-50 flex items-center justify-between border-b last:border-0 border-pink-50">
                     <span>{t}</span>
                     {appointment.selectedDateTime?.includes(t) && <Check className="w-4 h-4 text-[#F9B2C1]" />}
                   </button>
@@ -156,16 +156,16 @@ const AvailabilityResults: React.FC<Props> = ({ appointment, onUpdate }) => {
           </div>
         </div>
 
-        <div className="bg-pink-50/50 p-5 rounded-2xl border border-pink-100 mt-4">
-          <h4 className="text-[10px] text-[#F9B2C1] font-extrabold uppercase tracking-widest mb-3">Resumen de búsqueda:</h4>
-          <div className="flex flex-wrap gap-4">
+        <div className="bg-pink-50/50 p-4 rounded-2xl border border-pink-100 mt-2">
+          <h4 className="text-[10px] text-[#F9B2C1] font-extrabold uppercase tracking-widest mb-2">Resumen de búsqueda:</h4>
+          <div className="flex gap-6">
             <div className="flex flex-col">
               <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Tipo</span>
-              <span className="text-xs font-bold text-slate-700">{appointment.type}</span>
+              <span className="text-[11px] font-medium text-slate-700">{appointment.type || 'No definido'}</span>
             </div>
             <div className="flex flex-col">
               <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Periodo</span>
-              <span className="text-xs font-bold text-slate-700">{appointment.week}</span>
+              <span className="text-[11px] font-medium text-slate-700">{appointment.week || 'No definido'}</span>
             </div>
           </div>
         </div>

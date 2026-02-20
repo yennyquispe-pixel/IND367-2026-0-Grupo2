@@ -13,9 +13,7 @@ const ReviewConfirmation: React.FC<Props> = ({ appointment, history }) => {
   const navigate = useNavigate();
 
   const handleConfirm = () => {
-    // Check for conflict: same date AND same time
     const conflict = history.find(item => item.selectedDateTime === appointment.selectedDateTime);
-    
     if (conflict) {
       navigate(RoutePath.CONFLICT);
     } else {
@@ -24,33 +22,33 @@ const ReviewConfirmation: React.FC<Props> = ({ appointment, history }) => {
   };
 
   return (
-    <div className="flex flex-col h-full animate-fadeIn">
+    <div className="flex flex-col h-full animate-fadeIn bg-white overflow-hidden">
       <Header title="VidaMaterna" showBack />
       <SectionTitle>CONFIRMACIÓN DE CITA</SectionTitle>
 
-      <div className="flex-1 flex flex-col p-6">
-        <div className="mb-6 rounded-2xl overflow-hidden shadow-md">
+      <div className="flex-1 flex flex-col px-6 py-1">
+        <div className="mb-3 rounded-2xl overflow-hidden shadow-sm shrink-0">
            <img 
             src="https://images.unsplash.com/photo-1531983412531-1f49a365ffed?q=80&w=800&auto=format&fit=crop" 
             alt="Ilustración de cuidado" 
-            className="w-full h-40 object-cover"
+            className="w-full h-28 object-cover"
            />
         </div>
 
-        <h3 className="text-slate-700 font-bold mb-4">Por favor, revisa los detalles de tu cita</h3>
+        <h3 className="text-slate-700 font-bold mb-2 text-xs">Por favor, revisa los detalles de tu cita</h3>
 
-        <div className="space-y-1">
+        <div className="space-y-1.5 mb-2 overflow-hidden">
           <InfoCard label="Fecha y Hora" value={appointment.selectedDateTime || ""} />
           <InfoCard label="Centro de salud" value={appointment.healthCenter || ""} />
           <InfoCard label="Tipo de cita" value={appointment.type === 'REGULAR' ? 'Control prenatal' : appointment.type || 'Control prenatal'} />
           <InfoCard label="Obstetra a cargo" value={appointment.selectedDoctor || ""} />
         </div>
 
-        <div className="mt-auto space-y-4 pt-6">
-          <PrimaryButton onClick={handleConfirm}>
+        <div className="mt-auto space-y-2 pb-4">
+          <PrimaryButton onClick={handleConfirm} className="py-3.5">
             CONFIRMAR CITA
           </PrimaryButton>
-          <SecondaryButton onClick={() => navigate(RoutePath.SCHEDULE_FORM)}>
+          <SecondaryButton onClick={() => navigate(RoutePath.SCHEDULE_FORM)} className="py-3.5">
             REGRESAR Y CAMBIAR DATOS
           </SecondaryButton>
         </div>
