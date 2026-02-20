@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { AppointmentData, RoutePath } from '../types';
 import { Header, PrimaryButton } from '../components/Shared';
 import { FileText, Download, User, Activity, Heart, Scale, ClipboardList, MapPin, Calendar } from 'lucide-react';
+import { jsPDF } from 'jspdf';
 
 interface Props {
   appointment: AppointmentData | null;
@@ -11,6 +12,81 @@ interface Props {
 
 const AppointmentDetails: React.FC<Props> = ({ appointment }) => {
   const navigate = useNavigate();
+
+  const handleDownloadPDF = () => {
+    if (!appointment) return;
+
+    try {
+      const doc = new jsPDF();
+      const margin = 20;
+      let y = 20;
+
+      // Header
+      doc.setFillColor(249, 178, 193); // #F9B2C1
+      doc.rect(0, 0, 210, 40, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(24);
+      doc.setFont('helvetica', 'bold');
+      doc.text('VidaMaterna', margin, 27);
+      
+      doc.setFontSize(10);
+      doc.text('INFORME DE CONTROL PRENATAL', 140, 25);
+      
+      y = 55;
+      doc.setTextColor(50, 50, 50);
+      doc.setFontSize(16);
+      doc.text('Detalles de la Cita', margin, y);
+      
+      y += 10;
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Centro de Salud: ${appointment.healthCenter}`, margin, y);
+      y += 7;
+      doc.text(`Tipo de Cita: ${appointment.type}`, margin, y);
+      y += 7;
+      doc.text(`Semana de Gestación: ${appointment.week}`, margin, y);
+      y += 7;
+      doc.text(`Especialista: ${appointment.selectedDoctor}`, margin, y);
+      y += 7;
+      doc.text(`Fecha y Hora: ${appointment.selectedDateTime}`, margin, y);
+      
+      y += 15;
+      doc.setFont('helvetica', 'bold');
+      doc.text('SIGNOS VITALES', margin, y);
+      doc.setDrawColor(249, 178, 193);
+      doc.line(margin, y + 2, 190, y + 2);
+      
+      y += 12;
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Peso: ${appointment.weight || '---'}`, margin, y);
+      y += 7;
+      doc.text(`Presión Arterial: ${appointment.bloodPressure || '---'}`, margin, y);
+      y += 7;
+      doc.text(`Frecuencia Cardíaca Fetal: ${appointment.fetalHeartRate || '---'}`, margin, y);
+      
+      y += 15;
+      doc.setFont('helvetica', 'bold');
+      doc.text('OBSERVACIONES MÉDICAS', margin, y);
+      doc.line(margin, y + 2, 190, y + 2);
+      
+      y += 12;
+      doc.setFont('helvetica', 'italic');
+      const splitNotes = doc.splitTextToSize(appointment.notes || "No hay observaciones detalladas registradas para esta cita.", 170);
+      doc.text(splitNotes, margin, y);
+      
+      y += (splitNotes.length * 7) + 15;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(150, 150, 150);
+      doc.text('Este documento es un registro digital de su control prenatal generado por la aplicación VidaMaterna.', margin, y);
+      doc.text('Por favor, presente este informe en su próxima consulta si es necesario.', margin, y + 5);
+
+      doc.save(`Informe_Cita_${appointment.tentativeDate || 'Cita'}.pdf`);
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      alert("Hubo un error al generar el PDF. Por favor intente de nuevo.");
+    }
+  };
 
   if (!appointment) {
     return (
@@ -96,7 +172,7 @@ const AppointmentDetails: React.FC<Props> = ({ appointment }) => {
         {/* Acciones */}
         <div className="space-y-4 pt-4">
            <PrimaryButton 
-            onClick={() => alert("Generando y descargando PDF...")}
+            onClick={handleDownloadPDF}
             className="flex items-center justify-center gap-3"
            >
               <Download className="w-5 h-5" />

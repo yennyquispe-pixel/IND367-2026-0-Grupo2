@@ -45,7 +45,6 @@ const MapLocation: React.FC<Props> = ({ appointment }) => {
               <Globe className="w-4 h-4 text-white" />
            </div>
            <div className="flex flex-col">
-              {/* Se eliminó el texto "ACCESO DIRECTO" por solicitud del usuario */}
               <span className="text-[8px] text-pink-100/80 font-bold uppercase tracking-widest">Red de Salud VidaMaterna</span>
            </div>
         </div>
@@ -83,8 +82,8 @@ const MapLocation: React.FC<Props> = ({ appointment }) => {
 
         <div className="bg-slate-50 p-4 rounded-2xl mb-4 border border-slate-100 shrink-0">
           <p className="text-[11px] text-slate-500 leading-snug">
-            <span className="font-extrabold text-[#F9B2C1] uppercase tracking-tighter mr-1">Cómo llegar:</span> 
-            Ingresa por el pabellón de consultorios externos y sigue las líneas guía de color rosado hasta el área de Obstetricia.
+            <span className="font-extrabold text-[#F9B2C1] uppercase tracking-tighter mr-1 italic">Cómo llegar:</span> 
+            <span className="italic">Ingresa por el pabellón de consultorios externos y sigue las líneas guía de color rosado hasta el área de Obstetricia.</span>
           </p>
         </div>
 

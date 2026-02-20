@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Calendar, MapPin, X, ChevronRight } from 'lucide-react';
+import { Search, Calendar, MapPin, X, ChevronRight, AlertCircle } from 'lucide-react';
 import { AppointmentData, RoutePath, AppointmentType, PUBLIC_HEALTH_CENTERS } from '../types';
 import { Header, PrimaryButton } from '../components/Shared';
 
@@ -10,11 +10,29 @@ interface Props {
   onUpdate: (data: Partial<AppointmentData>) => void;
 }
 
+// Lista aproximada de feriados en Perú para validación
+const PERU_HOLIDAYS = [
+  "01-01", // Año Nuevo
+  "05-01", // Día del Trabajo
+  "06-07", // Día de la Bandera
+  "06-29", // San Pedro y San Pablo
+  "07-28", // Independencia
+  "07-29", // Independencia
+  "08-06", // Batalla de Junín
+  "08-30", // Santa Rosa de Lima
+  "10-08", // Combate de Angamos
+  "11-01", // Todos los Santos
+  "12-08", // Inmaculada Concepción
+  "12-09", // Batalla de Ayacucho
+  "12-25", // Navidad
+];
+
 const ScheduleForm: React.FC<Props> = ({ appointment, onUpdate }) => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState(appointment.healthCenter || "");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [dateError, setDateError] = useState("");
   const suggestionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -52,6 +70,37 @@ const ScheduleForm: React.FC<Props> = ({ appointment, onUpdate }) => {
     setSearchTerm(center);
     onUpdate({ healthCenter: center });
     setShowSuggestions(false);
+  };
+
+  const validateDate = (dateStr: string) => {
+    if (!dateStr) return true;
+    const date = new Date(dateStr + "T00:00:00");
+    const day = date.getDay(); // 0: Sunday, 6: Saturday
+    
+    // Validar fin de semana
+    if (day === 0 || day === 6) {
+      setDateError("No atendemos los fines de semana (sábados o domingos).");
+      return false;
+    }
+
+    // Validar feriados
+    const monthDay = `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    if (PERU_HOLIDAYS.includes(monthDay)) {
+      setDateError("La fecha seleccionada es un día feriado.");
+      return false;
+    }
+
+    setDateError("");
+    return true;
+  };
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    if (validateDate(val)) {
+      onUpdate({ tentativeDate: val });
+    } else {
+      onUpdate({ tentativeDate: "" });
+    }
   };
 
   return (
@@ -150,9 +199,15 @@ const ScheduleForm: React.FC<Props> = ({ appointment, onUpdate }) => {
               type="date"
               className={`w-full bg-slate-50 border border-slate-100 py-3 pl-12 pr-5 rounded-2xl outline-none focus:ring-2 focus:ring-[#F9B2C1]/30 transition-all text-sm font-medium ${appointment.tentativeDate ? 'text-slate-800' : 'text-slate-300'}`}
               value={appointment.tentativeDate || ""}
-              onChange={(e) => onUpdate({ tentativeDate: e.target.value })}
+              onChange={handleDateChange}
             />
           </div>
+          {dateError && (
+            <div className="flex items-center gap-2 mt-1 px-2 text-red-500 animate-fadeIn">
+              <AlertCircle className="w-3.5 h-3.5" />
+              <p className="text-[10px] font-bold">{dateError}</p>
+            </div>
+          )}
         </div>
       </div>
 
